@@ -52,7 +52,6 @@ def double_eights(n):
     >>> double_eights(80808080)
     False
     """
-    "*** YOUR CODE HERE ***"
     return str(n).find('88') != -1
 
 
