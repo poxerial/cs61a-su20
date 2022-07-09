@@ -115,12 +115,16 @@ def pingpong(n):
     """
     if n < 8:
         return n 
+    """
+    another version: too slow to compute out
     if (n - 1) % 8 == 0 or num_eights(n - 1) != 0:
         return pingpong(n - 2)
+    return pingpong(n - 1) + (pingpong(n - 1) - pingpong(n - 2))
+    """
     def is_increase(n):
         if n < 8:
             return True
-        if (n - 1) % 8 == 0 or num_eights(n - 1) != 0:
+        if n % 8 == 0 or num_eights(n) != 0:
             return not is_increase(n - 1)
         return is_increase(n - 1)
     if is_increase(n - 1):
