@@ -14,6 +14,7 @@ test = {
           ],
           'hidden': False,
           'locked': False,
+          'multiline': False,
           'question': r"""
           The variables score0 and score1 are the scores for Player 0
           and Player 1, respectively. Under what conditions should the
@@ -29,6 +30,7 @@ test = {
           ],
           'hidden': False,
           'locked': False,
+          'multiline': False,
           'question': 'What is a strategy in the context of this game?'
         },
         {
@@ -41,6 +43,7 @@ test = {
           ],
           'hidden': False,
           'locked': False,
+          'multiline': False,
           'question': r"""
           If strategy1 is Player 1's strategy function, score0 is
           Player 0's current score, and score1 is Player 1's current
@@ -65,7 +68,8 @@ test = {
           10
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         },
         {
           'code': r"""
@@ -78,7 +82,8 @@ test = {
           0
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         },
         {
           'code': r"""
@@ -91,7 +96,8 @@ test = {
           21
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         },
         {
           'code': r"""
@@ -104,7 +110,8 @@ test = {
           0
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         }
       ],
       'scored': True,
@@ -132,7 +139,8 @@ test = {
           108
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         }
       ],
       'scored': True,
@@ -157,7 +165,8 @@ test = {
           99
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         },
         {
           'code': r"""
@@ -170,7 +179,8 @@ test = {
           104
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         },
         {
           'code': r"""
@@ -183,7 +193,8 @@ test = {
           17
           """,
           'hidden': False,
-          'locked': False
+          'locked': False,
+          'multiline': False
         }
       ],
       'scored': True,
