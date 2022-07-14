@@ -20,8 +20,8 @@ def merge(lst1, lst2):
         list.extend(merge(lst1[1:], lst2))
         return list
     list = [lst2[0]]
-    list.extend(merge(lst1, lst2[1:])) 
-    return list 
+    list.extend(merge(lst1, lst2[1:]))
+    return list
 
 
 class Mint:
@@ -59,7 +59,7 @@ class Mint:
         self.update()
 
     def create(self, coin):
-        return coin(self.year)  
+        return coin(self.year)
 
     def update(self):
         self.year = self.present_year
@@ -120,12 +120,13 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
+
     def __init__(self, name, price):
         self.name = name
         self.price = price
         self.amount = 0
         self.funds = 0
-    
+
     def add_funds(self, funds):
         if (self.amount == 0):
             return f'Nothing left to vend. Please restock. Here is your ${funds}.'
@@ -135,7 +136,7 @@ class VendingMachine:
     def restock(self, amount):
         self.amount += amount
         return f'Current {self.name} stock: {self.amount}'
-    
+
     def vend(self):
         if self.amount == 0:
             return 'Nothing left to vend. Please restock.'
@@ -150,11 +151,3 @@ class VendingMachine:
                 return message
             else:
                 return f'Here is your {self.name}.'
-
-
-        
-
-
-
-    
-
