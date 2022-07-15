@@ -63,7 +63,7 @@ def has_cycle(link):
             if target is l:
                 return True
         return False
-        
+            
     links = []
     while link != Link.empty:
         if is_in(link, links):
