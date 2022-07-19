@@ -3,6 +3,7 @@ import os
 
 from pair import *
 from scheme_utils import *
+from scheme_builtins import *
 from ucb import main, trace
 
 import scheme_forms
@@ -22,7 +23,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     4
     """
     # BEGIN Problem 1/2
-    "*** YOUR CODE HERE ***"
+    
     # END Problem 1/2
 
 
@@ -50,5 +51,4 @@ def complete_apply(procedure, args, env):
     if you attempt the extra credit."""
     validate_procedure(procedure)
     # BEGIN
-    return val
     # END
