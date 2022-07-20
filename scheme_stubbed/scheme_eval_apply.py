@@ -13,7 +13,7 @@ import scheme_forms
 ##############
 
 
-def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
+def scheme_eval(expr: Pair, env, _=None):  # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in Frame ENV.
 
     >>> expr = read_line('(+ 2 2)')
@@ -23,7 +23,6 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     4
     """
     # BEGIN Problem 1/2
-    
     # END Problem 1/2
 
 
