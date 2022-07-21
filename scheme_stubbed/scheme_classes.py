@@ -19,7 +19,9 @@ class Frame:
     def __init__(self, parent):
         """An empty frame with parent frame PARENT (which may be None)."""
         # BEGIN Problem 1
-        "*** YOUR CODE HERE ***"
+        self.parent = parent
+        self.local_vals = []
+        self.local_prcd = []
         # END Problem 1
 
     def __repr__(self):
@@ -31,11 +33,21 @@ class Frame:
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN Problem 1
-        "*** YOUR CODE HERE ***"
+        defined_before = self.find(symbol)
+        if defined_before:
+            defined_before[1] = value
+            return
+        self.local_vals.append([symbol, value])
         # END Problem 1
 
     # BEGIN Problem 1
-    "*** YOUR CODE HERE ***"
+    def find(self, symbol):
+        for l in self.local_vals:
+            if l[0] == symbol:
+                return l
+        if self.parent:
+            return self.parent.find(symbol)
+        return None
     # END Problem 1
 
 ##############

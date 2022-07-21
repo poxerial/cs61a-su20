@@ -39,13 +39,12 @@ builtin("symbol?")(scheme_symbolp)
 builtin("string?")(scheme_stringp)
 builtin("null?")(scheme_nullp)
 
-
 @builtin("not")
 def scheme_not(x):
     return not is_scheme_true(x)
 
 
-@builtin("equal?")
+@builtin("equal?", expect_env=True)
 def scheme_equalp(x, y):
     if scheme_pairp(x) and scheme_pairp(y):
         return scheme_equalp(x.first, y.first) and scheme_equalp(x.rest, y.rest)
