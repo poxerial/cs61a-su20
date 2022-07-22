@@ -1,5 +1,6 @@
 import sys
 import os
+from unittest.util import strclass
 
 from pair import *
 from scheme_utils import *
@@ -12,6 +13,14 @@ import scheme_forms
 # Eval/Apply #
 ##############
 
+def __main__():
+    print('begin!')
+    breakpoint
+    expr = read_line('(define (f x) (* x x)')
+    f = Frame(None)
+    scheme_eval(expr, f)
+    val = scheme_eval(read_line())
+    print(val)
 
 def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in Frame ENV.
@@ -23,7 +32,6 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     4
     """
     # BEGIN Problem 1/2
-
     other_builtins = {}
 
     def builtin_find(name):
@@ -37,10 +45,28 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
             other_builtins[name]=py_func
             return py_func
         return add
+
+    @other_builtin('lambda')
+    def scheme_lambda(expr_rest, env:Frame):
+        formals = expr_rest.first
+        body = expr_rest.rest
+        if body == nil:
+            raise SchemeError('Invalid lambda expressing!')
+        return LambdaProcedure(formals, body, env)
         
     @other_builtin('define')
     def scheme_define(expr_rest, env:Frame):
         name = expr_rest.first
+        if type(name) == Pair:
+            formals = name.rest
+            name = name.first
+            if type(name) != str:
+                raise SchemeError('Invalid defining!')
+            body = expr_rest.rest
+            func = LambdaProcedure(formals, body, env)
+            env.define(name, func)
+            func.env.define(name, func)
+            return name
         if type(name) != str or name in other_builtins or builtin_find(name):
             raise SchemeError('Invalide define name ' + str(name))
         value = scheme_eval(expr_rest.rest.first, env)
@@ -55,45 +81,60 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     def scheme_quote(expr_rest, env:Frame):
         return expr_rest.first
     
+    @other_builtin('begin')
+    def scheme_begin(expr_rest, env:Frame):
+        rt = None
+        while expr_rest != nil:
+            rt = scheme_eval(expr_rest.first, env)
+            expr_rest = expr_rest.rest
+        return rt
 
     if type(expr) != Pair:
         if type(expr)==str:
             l = env.find(expr)
             if l:
-                return l[1] 
+                return l
+            val = env.find(expr)
+            if val != None:
+               return val
             if builtin_find(expr):
                 return '#'+expr
             else:
-                raise SchemeError('Undefined name: ' + expr) 
+                raise SchemeError('Undefined name: ' + str(expr)) 
         return expr
     
     operator_name = expr.first
     if type(operator_name) != str:
-        raise SchemeError('Undefined behavior!')
+        if type(operator_name) == Pair:
+            prcd = scheme_eval(operator_name, env)
+            return complete_apply(prcd, expr.rest, env)
+        else:
+            raise SchemeError('No valid operator!')
 
     if operator_name in other_builtins:
         return other_builtins[operator_name](expr.rest, env)
+
+    prcd = env.find(operator_name)
+    if prcd:
+        if type(prcd) == LambdaProcedure:
+            return complete_apply(prcd, expr.rest, env)
 
     args = []
     temp = expr.rest
     while type(temp) == Pair:
         args.append(scheme_eval(temp.first, env))
         temp = temp.rest
-    operator_name = expr.first
 
-    for t in BUILTINS:
-        if t[0] == operator_name:
-            try:
-                if t[3]:
-                    return t[1](*args, env)
-                else:
-                    return t[1](*args)
-            except TypeError:
-                raise SchemeError(TypeError)
+    t = builtin_find(operator_name)
+    if t:
+        try:
+            if t[3]:
+                return t[1](*args, env=env)
+            else:
+                return t[1](*args)
+        except TypeError:
+            raise SchemeError(TypeError)
     raise SchemeError('Undefined operator ' + str(operator_name) + '!')
-    
-
-             
     # END Problem 1/2
 
 
@@ -130,4 +171,33 @@ def complete_apply(procedure, args, env):
     if you attempt the extra credit."""
     validate_procedure(procedure)
     # BEGIN
+    if type(procedure) == BuiltinProcedure:
+        scheme_apply(procedure, args, env)
+    elif type(procedure) == LambdaProcedure:
+        func_frame = Frame(env)
+        formals = procedure.formals
+        while args != nil:
+            if formals == nil:
+                raise SchemeError('Invalid args parsed to procedure!')
+            func_frame.define(formals.first, scheme_eval(args.first, func_frame))
+            args = args.rest
+            formals = formals.rest
+        if formals != nil:
+            raise SchemeError('Invalid args parsed to procedure!')
+        val = scheme_eval(procedure.body.first, func_frame)
+        temp = procedure.body.rest
+        if temp != nil:
+            val = scheme_eval(temp.first, func_frame)
+            temp = temp.rest
+        return val
+
     # END
+def line_eval(expr:str, frame=Frame(None)):
+    return scheme_eval(read_line(expr), frame)
+
+
+def __main__():
+    expr = read_line('(define (f x) (* x x)')
+    f = Frame(None)
+    scheme_eval(expr, f)
+    print(scheme_eval(read_line('(f 2)'), f))

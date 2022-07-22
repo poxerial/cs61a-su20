@@ -20,8 +20,7 @@ class Frame:
         """An empty frame with parent frame PARENT (which may be None)."""
         # BEGIN Problem 1
         self.parent = parent
-        self.local_vals = []
-        self.local_prcd = []
+        self.local_vals = {}
         # END Problem 1
 
     def __repr__(self):
@@ -33,18 +32,13 @@ class Frame:
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN Problem 1
-        defined_before = self.find(symbol)
-        if defined_before:
-            defined_before[1] = value
-            return
-        self.local_vals.append([symbol, value])
+        self.local_vals[symbol] = value
         # END Problem 1
 
     # BEGIN Problem 1
     def find(self, symbol):
-        for l in self.local_vals:
-            if l[0] == symbol:
-                return l
+        if symbol in self.local_vals:
+            return self.local_vals[symbol] 
         if self.parent:
             return self.parent.find(symbol)
         return None
