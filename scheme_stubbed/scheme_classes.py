@@ -32,6 +32,8 @@ class Frame:
     def define(self, symbol, value):
         """Define Scheme SYMBOL to have VALUE."""
         # BEGIN Problem 1
+        if type(symbol) != str:
+            raise SchemeError('Wrong define name!')
         self.local_vals[symbol] = value
         # END Problem 1
 
