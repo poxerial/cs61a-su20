@@ -2,6 +2,8 @@ import sys
 import os
 from unittest.util import strclass
 
+sys.path.append("scheme_reader")
+
 from pair import *
 from scheme_utils import *
 from scheme_builtins import *
@@ -175,6 +177,13 @@ def complete_apply(procedure, args, env):
         scheme_apply(procedure, args, env)
     elif type(procedure) == LambdaProcedure:
         func_frame = Frame(env)
+
+        prcd_env = procedure.env
+        while prcd_env != None:
+            for key in prcd_env.local_vals:
+                func_frame.local_vals[key]=prcd_env.local_vals[key]
+            prcd_env = prcd_env.parent
+
         formals = procedure.formals
         while args != nil:
             if formals == nil:
@@ -195,9 +204,12 @@ def complete_apply(procedure, args, env):
 def line_eval(expr:str, frame=Frame(None)):
     return scheme_eval(read_line(expr), frame)
 
-
-def __main__():
-    expr = read_line('(define (f x) (* x x)')
-    f = Frame(None)
+@main
+def test():
+    expr = read_line('''(define (outer-func x y)
+   (define (inner z x)
+     (+ x (* y 2) (* z 3)))
+   inner)''')
+    f =Frame(None)
     scheme_eval(expr, f)
-    print(scheme_eval(read_line('(f 2)'), f))
+    print(line_eval('((outer-func 1 2) 1 10)', f))
