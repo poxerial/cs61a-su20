@@ -1,15 +1,11 @@
-from sre_constants import NOT_LITERAL_LOC_IGNORE
 import scheme_forms
 from ucb import main, trace
 from scheme_builtins import *
 from scheme_utils import *
 from pair import *
 import sys
-import os
-from unittest.util import strclass
 
-sys.path.append("scheme_reader")
-
+sys.setrecursionlimit(5000)
 
 ##############
 # Eval/Apply #
@@ -162,13 +158,10 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     4
     """
     # BEGIN Problem 1/2
-
     if type(expr) != Pair:
         if type(expr) == str:
             if expr == 'else':
                 return True
-            if expr == '#t' or expr == '#f':
-                return expr
             val = env.find(expr)
             if val != None:
                 return val
@@ -191,7 +184,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
 
     prcd = env.find(operator_name)
     if prcd:
-        if type(prcd) == LambdaProcedure:
+        if isinstance(prcd, Procedure):
             return complete_apply(prcd, expr.rest, env)
 
     args = []
@@ -249,20 +242,13 @@ def complete_apply(procedure, args, env):
     if type(procedure) == BuiltinProcedure:
         scheme_apply(procedure, args, env)
     elif type(procedure) == LambdaProcedure:
-        func_frame = Frame(env)
-
-        prcd_env = procedure.env
-        while prcd_env != None:
-            for key in prcd_env.local_vals:
-                func_frame.local_vals[key] = prcd_env.local_vals[key]
-            prcd_env = prcd_env.parent
-
+        func_frame = Frame(procedure.env)
         formals = procedure.formals
         while args != nil:
             if formals == nil:
                 raise SchemeError('Invalid args parsed to procedure!')
             func_frame.define(
-                formals.first, scheme_eval(args.first, func_frame))
+                formals.first, scheme_eval(args.first, env))
             args = args.rest
             formals = formals.rest
         if formals != nil:
@@ -273,16 +259,15 @@ def complete_apply(procedure, args, env):
             val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
         return val
-
+    elif type(procedure) == MuProcedure:
+        func_frame = Frame(env)
     # END
 
 
-def line_eval(expr: str, frame=Frame(None)):
-    return scheme_eval(read_line(expr), frame)
 
-
-@main
 def test():
+    def line_eval(string:str, env:Frame):
+        return scheme_eval(read_line(string), env)
     f = Frame(None)
-    line_eval('(define (f x) (if (< x 3) 1 (+ (f (- x 1)) (f (- x 2)))))', f)
-    print(line_eval('(f 5)', f))
+    print(line_eval('(begin (+ 2 3) (+ 5 6))', f))
+
