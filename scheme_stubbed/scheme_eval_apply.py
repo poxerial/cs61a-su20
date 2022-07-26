@@ -149,8 +149,12 @@ def scheme_let(expr_rest, env):
 
 @other_builtin('mu')
 def scheme_mu(expr_rest, env):
-    return scheme_lambda(expr_rest, env)
-
+    formals = expr_rest.first
+    body = expr_rest.rest
+    if body == nil:
+        raise SchemeError('Invalid mu expressing!')
+    return MuProcedure(formals, body)
+    
 
 def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in Frame ENV.
@@ -191,24 +195,9 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
 
     prcd = env.find(operator_name)
     if prcd:
-        if type(prcd) == LambdaProcedure:
+        if isinstance(prcd, Procedure):
             return complete_apply(prcd, expr.rest, env)
 
-    args = []
-    temp = expr.rest
-    while type(temp) == Pair:
-        args.append(scheme_eval(temp.first, env))
-        temp = temp.rest
-
-    t = builtin_find(operator_name)
-    if t:
-        try:
-            if t[3]:
-                return t[1](*args, env=env)
-            else:
-                return t[1](*args)
-        except TypeError:
-            raise SchemeError(TypeError)
     raise SchemeError('Undefined operator ' + str(operator_name) + '!')
     # END Problem 1/2
 
@@ -219,7 +208,7 @@ def scheme_apply(procedure, args, env):
     # BEGIN Problem 1/2
     py_args = []
     while args != nil:
-        py_args.append(args.first)
+        py_args.append(scheme_eval(args.first, env))
         args = args.rest
     try:
         if procedure.expect_env:
@@ -247,22 +236,16 @@ def complete_apply(procedure, args, env):
     validate_procedure(procedure)
     # BEGIN
     if type(procedure) == BuiltinProcedure:
-        scheme_apply(procedure, args, env)
+        return scheme_apply(procedure, args, env)
     elif type(procedure) == LambdaProcedure:
-        func_frame = Frame(env)
-
-        prcd_env = procedure.env
-        while prcd_env != None:
-            for key in prcd_env.local_vals:
-                func_frame.local_vals[key] = prcd_env.local_vals[key]
-            prcd_env = prcd_env.parent
+        func_frame = Frame(procedure.env)
 
         formals = procedure.formals
         while args != nil:
             if formals == nil:
                 raise SchemeError('Invalid args parsed to procedure!')
             func_frame.define(
-                formals.first, scheme_eval(args.first, func_frame))
+                formals.first, scheme_eval(args.first, env))
             args = args.rest
             formals = formals.rest
         if formals != nil:
@@ -273,16 +256,10 @@ def complete_apply(procedure, args, env):
             val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
         return val
-
+    elif type(procedure) == MuProcedure:
+        lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
+        return complete_apply(lambda_prcd, args, env)
     # END
 
-
-def line_eval(expr: str, frame=Frame(None)):
-    return scheme_eval(read_line(expr), frame)
-
-
-@main
-def test():
-    f = Frame(None)
-    line_eval('(define (f x) (if (< x 3) 1 (+ (f (- x 1)) (f (- x 2)))))', f)
-    print(line_eval('(f 5)', f))
+"""
+"""
