@@ -7,8 +7,8 @@
 ;; Returns a list of two-element lists
 (define (enumerate s)
   ; BEGIN PROBLEM 15
-  'replace-this-line
-  )
+    (define (emnumerate_core s n) (if (= s nil) nil (cons (cons n (car s)) (emnumerate_core (cdr s) (+ n 1)))) )
+)
   ; END PROBLEM 15
 
 ;; Problem 16

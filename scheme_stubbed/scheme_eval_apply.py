@@ -232,10 +232,6 @@ def complete_apply(procedure, args, env):
         return scheme_apply(procedure, args, env)
     elif type(procedure) == LambdaProcedure:
         func_frame = Frame(procedure.env)
-<<<<<<< HEAD
-
-=======
->>>>>>> affcd1a010ac97aadfc9e132eacb3d23480ae772
         formals = procedure.formals
         while args != nil:
             if formals == nil:
@@ -253,23 +249,7 @@ def complete_apply(procedure, args, env):
             temp = temp.rest
         return val
     elif type(procedure) == MuProcedure:
-<<<<<<< HEAD
         lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
         return complete_apply(lambda_prcd, args, env)
     # END
 
-"""
-"""
-=======
-        func_frame = Frame(env)
-    # END
-
-
-
-def test():
-    def line_eval(string:str, env:Frame):
-        return scheme_eval(read_line(string), env)
-    f = Frame(None)
-    print(line_eval('(begin (+ 2 3) (+ 5 6))', f))
-
->>>>>>> affcd1a010ac97aadfc9e132eacb3d23480ae772
