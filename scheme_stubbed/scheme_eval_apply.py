@@ -219,6 +219,8 @@ def scheme_apply(procedure, args, env):
 
 # Make classes/functions for creating tail recursive programs here!
 # BEGIN Problem EC 1
+class Unevaluate:
+    """"""
 # END Problem EC 1
 
 
