@@ -221,6 +221,9 @@ def scheme_apply(procedure, args, env):
 # BEGIN Problem EC 1
 class Unevaluate:
     """Unevaluated object to implement tail recursion."""
+    def __init__(self, prcd, args):
+
+        
 # END Problem EC 1
 
 
@@ -249,6 +252,8 @@ def complete_apply(procedure, args, env):
         while temp != nil:
             val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
+        if type(val) == Pair:
+            
         return val
     elif type(procedure) == MuProcedure:
         lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
