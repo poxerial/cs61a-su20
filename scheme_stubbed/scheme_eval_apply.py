@@ -253,7 +253,7 @@ def complete_apply(procedure, args, env):
             val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
         if type(val) == Pair:
-            
+            return Unevaluate(prcd, args)
         return val
     elif type(procedure) == MuProcedure:
         lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
