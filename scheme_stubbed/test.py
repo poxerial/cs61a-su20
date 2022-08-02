@@ -1,4 +1,8 @@
-from scheme_reader import *
 from scheme import *
-expr = read_line('(define size 2)')
-print(scheme_eval(expr, create_global_frame()))
+
+expr = read_line('(define (f a) (if (< a 0) a (f (- a 1))))')
+f = create_global_frame()
+scheme_eval(expr, f)
+
+print(scheme_eval(read_line('(f 1000)'), f))
+print(type(scheme_eval(read_line('(f 1000)'), f)))

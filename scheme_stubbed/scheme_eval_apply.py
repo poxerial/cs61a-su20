@@ -205,7 +205,7 @@ def scheme_apply(procedure, args, env):
         args = args.rest
     try:
         if procedure.expect_env:
-            return procedure.py_func(*py_args, env=env)
+            return procedure.py_func(*py_args, env)
         else:
             return procedure.py_func(*py_args)
     except TypeError:
@@ -219,11 +219,15 @@ def scheme_apply(procedure, args, env):
 
 # Make classes/functions for creating tail recursive programs here!
 # BEGIN Problem EC 1
-class Unevaluate:
+class Unevaluated:
     """Unevaluated object to implement tail recursion."""
-    def __init__(self, prcd, args):
-
-        
+    def __init__(self, invoke):
+        self.invoke=invoke
+    def eval(self, env:Frame):
+        rst = self.invoke
+        while type(rst) == Pair and rst.first == self.invoke.first:
+            rst = scheme_eval(rst, env)
+        return rst
 # END Problem EC 1
 
 
@@ -250,10 +254,12 @@ def complete_apply(procedure, args, env):
         val = scheme_eval(procedure.body.first, func_frame)
         temp = procedure.body.rest
         while temp != nil:
-            val = scheme_eval(temp.first, func_frame)
+            if type(temp.first) == Pair and isinstance(temp.first.first, Procedure) and temp.first.first == procedure:
+                unevaluated = Unevaluated(temp.first)
+                val = unevaluated.eval(func_frame)
+            else:
+                val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
-        if type(val) == Pair:
-            return Unevaluate(prcd, args)
         return val
     elif type(procedure) == MuProcedure:
         lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
