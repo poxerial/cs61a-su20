@@ -219,15 +219,6 @@ def scheme_apply(procedure, args, env):
 
 # Make classes/functions for creating tail recursive programs here!
 # BEGIN Problem EC 1
-class Unevaluated:
-    """Unevaluated object to implement tail recursion."""
-    def __init__(self, invoke):
-        self.invoke=invoke
-    def eval(self, env:Frame):
-        rst = self.invoke
-        while type(rst) == Pair and rst.first == self.invoke.first:
-            rst = scheme_eval(rst, env)
-        return rst
 # END Problem EC 1
 
 
@@ -242,6 +233,9 @@ def complete_apply(procedure, args, env):
     elif type(procedure) == LambdaProcedure:
         func_frame = Frame(procedure.env)
         formals = procedure.formals
+
+        
+
         while args != nil:
             if formals == nil:
                 raise SchemeError('Invalid args parsed to procedure!')
@@ -254,15 +248,8 @@ def complete_apply(procedure, args, env):
         val = scheme_eval(procedure.body.first, func_frame)
         temp = procedure.body.rest
         while temp != nil:
-            if type(temp.first) == Pair and isinstance(temp.first.first, Procedure) and temp.first.first == procedure:
-                unevaluated = Unevaluated(temp.first)
-                val = unevaluated.eval(func_frame)
-            else:
-                val = scheme_eval(temp.first, func_frame)
+            val = scheme_eval(temp.first, func_frame)
             temp = temp.rest
         return val
-    elif type(procedure) == MuProcedure:
-        lambda_prcd = LambdaProcedure(procedure.formals, procedure.body, env)
-        return complete_apply(lambda_prcd, args, env)
     # END
 
