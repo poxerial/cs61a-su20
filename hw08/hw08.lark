@@ -1,0 +1,38 @@
+link: "Link("(link_first|link_rest|link_first","link_rest)")"
+
+?link_first: NUMBER
+
+?link_rest: link
+
+%ignore /\s+/
+%import common.NUMBER
+
+
+tree_node: "Tree("NUMBER(","branches)?")"
+
+
+?label: "null"
+
+branches: "["tree_node(","tree_node)*"]"
+
+%ignore /\s+/
+%import common.NUMBER
+
+
+rstring: "r\"" regex* "\""
+
+?regex: character | word | group | pipe | class
+
+character: LETTER | NUMBER
+group: "("regex")"
+pipe: regex "|" (regex | pipe)
+range: LETTER "-" LETTER | NUMBER "-" NUMBER
+?classcontainer: range | character
+class: "["classcontainer+"]"
+word: WORD
+
+%ignore /\s+/
+%import common.LETTER
+%import common.NUMBER
+%import common.WORD
+
