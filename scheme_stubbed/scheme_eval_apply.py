@@ -268,12 +268,12 @@ def define_args(procedure, args, func_frame, env):
     formals = procedure.formals
     while args != nil:
         if formals == nil:
-            raise SchemeError("Invalid args parsed to procedure!")
+            raise SchemeError(f"{procedure} was givern invalid arguments!")
         func_frame.define(formals.first, scheme_eval(args.first, env))
         args = args.rest
         formals = formals.rest
     if formals != nil:
-        raise SchemeError("Invalid args parsed to procedure!")
+        raise SchemeError(f"{procedure} was givern invalid arguments!")
 
 
 def non_tail_eval(procedure, func_frame):

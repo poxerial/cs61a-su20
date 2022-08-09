@@ -1,1 +1,5 @@
-((lambda (x) (print 'x)) 100)
+(define a 1)
+(define (f) a)
+(define (g) (f))
+(define a 2)
+(g)
